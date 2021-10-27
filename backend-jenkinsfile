@@ -6,7 +6,8 @@ pipeline {
         dockerImage = ''
         build_sha = ''
         job = 'test-job'
-        development_app = 'testapp-andros-develop'
+        development_app = 'kts-developmnet'
+        production_app = 'kts-production'
     }
 
     agent any
