@@ -40,6 +40,11 @@ pipeline {
                 script { build_sha = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim() }
             }
         }
+        stage('Printing') {
+            steps {
+                 sh "echo ${BRANCH}"
+            }
+        }
         stage('Pushing Containers: Develop') {
             when {
                 expression {params.Branch == "develop"}
