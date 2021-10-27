@@ -1,12 +1,14 @@
 #!/usr/bin/env groovy
 
+properties([pipelineTriggers([githubPush()])])
+
 pipeline {
     environment {
         registry = 'backend-testapp'
         dockerImage = ''
         build_sha = ''
         job = 'test-job'
-        development_app = 'kts-developmnet'
+        development_app = 'kts-development'
         production_app = 'kts-production'
     }
 
@@ -40,9 +42,14 @@ pipeline {
                 script { build_sha = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim() }
             }
         }
+        stage('Printing') {
+            steps {
+                 sh "echo ${BRANCH}"
+            }
+        }
         stage('Pushing Containers: Develop') {
             when {
-                expression {params.Branch == "master"}
+                expression {params.Branch == "develop"}
             }
             steps{
                 sh "heroku container:push web --app ${development_app}"
@@ -51,7 +58,7 @@ pipeline {
         }
         stage('Pushing Containers: Master') {
             when {
-                expression {params.Branch == "main"}
+                expression {params.Branch == "master"}
             }
             steps{
                 sh "heroku container:push web --app ${production_app}"
@@ -59,6 +66,9 @@ pipeline {
             }
         }
         stage('Cleaning up build artifacts: Develop') {
+            when {
+                expression {params.Branch == "develop"}
+            }
             steps {
                 sh 'ls -alF'
                 sh 'docker images'
@@ -69,6 +79,9 @@ pipeline {
             }
         }
         stage('Cleaning up build artifacts: Master') {
+            when {
+                expression {params.Branch == "master"}
+            }
             steps {
                 sh 'ls -alF'
                 sh 'docker images'
