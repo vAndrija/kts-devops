@@ -6,7 +6,7 @@ pipeline {
         dockerImage = ''
         build_sha = ''
         job = 'test-job'
-        development_app = 'kts-developmnet'
+        development_app = 'kts-development'
         production_app = 'kts-production'
     }
 
