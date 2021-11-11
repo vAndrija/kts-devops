@@ -67,7 +67,6 @@ pipeline {
             steps{
                 sh "pwd"
                 sh "ls"
-                sh "cd /var/lib/jenkins/workspace/backend-deploy/src/main/ && mkdir resources"
                 sh "cp /var/lib/jenkins/master/application.properties /var/lib/jenkins/workspace/backend-deploy/src/main/resources/application.properties"
                 sh "heroku container:push web --app ${production_app}"
                 sh "heroku container:release web --app ${production_app}"
