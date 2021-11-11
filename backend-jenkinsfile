@@ -52,6 +52,8 @@ pipeline {
                 expression {params.Branch == "develop"}
             }
             steps{
+                sh "pwd"
+                sh "ls"
                 sh "heroku container:push web --app ${development_app}"
                 sh "heroku container:release web --app ${development_app}"
             }
