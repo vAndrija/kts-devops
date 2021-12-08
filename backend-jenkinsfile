@@ -54,6 +54,7 @@ pipeline {
             steps{
                 sh "pwd"
                 sh "ls"
+                sh "echo $PORT"
                 sh "source ~/.bashrc"
                 sh "cp /var/lib/jenkins/develop/application.properties /var/lib/jenkins/workspace/backend-deploy/src/main/resources/application.properties"
                 sh "heroku container:push web --app ${development_app}"
