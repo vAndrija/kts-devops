@@ -52,7 +52,7 @@ pipeline {
                 PORT = "8080"
             }
             when {
-                expression {params.Branch == "develop"}
+                expression {params.Branch != "develop"}
             }
             steps{
                 sh "pwd"
