@@ -38,7 +38,7 @@ pipeline {
         }
         stage('Pulling App Code') {
             steps {
-                git  url: 'https://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@github.com/vAndrija/kts-frontend', branch: params.Branch, changelog: 'True'
+                git credentialsId: 'gitToken',  url: 'https://github.com/vAndrija/kts-frontend', branch: params.Branch, changelog: 'True'
                 script { build_sha = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim() }
             }
         }
