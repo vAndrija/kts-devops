@@ -49,7 +49,7 @@ pipeline {
         }
         stage('Pushing Containers: Develop') {
             when {
-                expression {params.Branch == "develop"}
+                expression {params.Branch != "master"}
             }
             steps{
                 sh "heroku container:push web --app ${development_app}"
@@ -67,7 +67,7 @@ pipeline {
         }
         stage('Cleaning up build artifacts: Develop') {
             when {
-                expression {params.Branch == "develop"}
+                expression {params.Branch != "master"}
             }
             steps {
                 sh 'ls -alF'
