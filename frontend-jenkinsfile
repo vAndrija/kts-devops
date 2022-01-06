@@ -73,7 +73,6 @@ pipeline {
                 sh 'ls -alF'
                 sh 'docker images'
                 sh "docker rmi registry.heroku.com/${development_app}/web"
-                sh "docker rmi --force \$(docker images -f \"dangling=true\" -q)"
                 sh 'ls -alF'
                 sh 'docker images'
             }
