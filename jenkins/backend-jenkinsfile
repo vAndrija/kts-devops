@@ -72,7 +72,7 @@ pipeline {
           sh "sed -i 's~HASH~${DeployTarget}-${build_sha}~g' k8s/backend/deployment.yaml"
           sh 'aws eks --region eu-central-1 update-kubeconfig --name test-app2'
           sh 'kubectl config set-context --current --namespace=my-commands'
-          sh "pwd && ls && kubectl apply -f dev/backend/deployment.yaml && kubectl apply -f dev/backend/service.yaml"
+          sh "pwd && ls && kubectl apply -f k8s/backend/deployment.yaml && kubectl apply -f k8s/backend/service.yaml"
    }} }
   }
 }
