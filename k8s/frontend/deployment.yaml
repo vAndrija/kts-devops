@@ -16,7 +16,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
       - name: kts-frontend
-        image: 194846926016.dkr.ecr.eu-central-1.amazonaws.com/kts-frontend:$HASH
+        image: 194846926016.dkr.ecr.eu-central-1.amazonaws.com/kts-frontend:HASH
         imagePullPolicy: Always
         ports:
         - containerPort: 3000
