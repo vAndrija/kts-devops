@@ -1,0 +1,78 @@
+#!/usr/bin/env groovy
+
+pipeline {
+  environment {
+    dockerImage = ''
+    build_sha = ''
+  }
+
+  agent any
+
+  options {
+    timeout(time: 30, unit: 'MINUTES')
+    buildDiscarder(logRotator(artifactDaysToKeepStr: '', artifactNumToKeepStr: '14', daysToKeepStr: '', numToKeepStr: '14'))
+  }
+
+  parameters {
+    string(name: 'Branch', defaultValue: 'develop', description: 'Which branch are we building?', trim: true)
+    choice(name: 'DeployTarget', choices: ['no_deploy', 'dev', 'prod'], description: 'Which environment are we deploying this to?')
+  }
+
+  stages {
+    stage('parameterizing') {
+      when {
+        expression { params.Invoke_Parameters == true }
+      }
+      steps {
+        script {
+          currentBuild.result = 'ABORTED'
+          error('DRY RUN COMPLETED. JOB PARAMETERIZED.')
+        }
+      }
+    }
+    stage('Pulling App Code') {
+      steps {
+        git credentialsId: 'github-andrija', url: 'https://github.com/vAndrija/kts-backend', branch: '${branch}', changelog: 'True'
+        script { build_sha = sh(returnStdout: true, script: "git log -n 1 --pretty=format:'%h'").trim()      
+        }
+      }
+    }
+    stage('Assembling App Container') {
+      steps {
+        script { sh(returnStdout: true, script: "echo \$(git log -n 1 --pretty=format:'%H') > code_revision") }
+        sh "cp /var/lib/jenkins/master/application.properties /var/lib/jenkins/workspace/backend-deploy/src/main/resources/application.properties"
+        sh "docker build -t 194846926016.dkr.ecr.eu-central-1.amazonaws.com/kts-backend:${DeployTarget}-${build_sha} ."
+      }
+    }
+    stage('Pushing Containers') {
+      steps {
+        script {
+            docker.withRegistry('https://194846926016.dkr.ecr.eu-central-1.amazonaws.com', 'ecr:eu-central-1:DEV_AWS_ACCESS_KEY') {
+            sh "docker push 194846926016.dkr.ecr.eu-central-1.amazonaws.com/kts-backend:${DeployTarget}-${build_sha}"
+            }
+        }
+      }
+    }
+    stage('Cleaning up build artifacts') {
+      steps {
+        sh 'ls -alF'
+        sh 'docker images'
+        sh "docker rmi 194846926016.dkr.ecr.eu-central-1.amazonaws.com/kts-backend:${DeployTarget}-${build_sha}"
+        sh 'ls -alF'
+        sh 'docker images'
+      }
+    }
+    stage('Pulling Configuration Code') {
+      steps{
+        git credentialsId: 'github-andrija', url: 'https://github.com/vAndrija/kts-devops', branch: 'master', changelog: 'True'}
+    }
+    stage('Deploying') {
+      steps{
+        script {
+          sh "sed -i 's~HASH~${DeployTarget}-${build_sha}~g' k8s/backend/deployment.yaml"
+          sh 'aws eks --region eu-central-1 update-kubeconfig --name test-app2'
+          sh 'kubectl config set-context --current --namespace=my-commands'
+          sh "pwd && ls && kubectl apply -f dev/backend/deployment.yaml && kubectl apply -f dev/backend/service.yaml"
+   }} }
+  }
+}
