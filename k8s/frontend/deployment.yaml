@@ -21,8 +21,6 @@ spec:
         ports:
         - containerPort: 3000
         env:
-        - name: BACKEND_URL
-          value: 'http://kts-backend-service'
         - name: PORT
           value: '3000'
         resources:

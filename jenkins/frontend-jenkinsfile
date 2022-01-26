@@ -41,6 +41,7 @@ pipeline {
     stage('Assembling App Container') {
       steps {
         script { sh(returnStdout: true, script: "echo \$(git log -n 1 --pretty=format:'%H') > code_revision") }
+        sh "cp /var/lib/jenkins/kts/proxy.conf.json /var/lib/jenkins/workspace/kts/kts-frontend/"
         sh "docker build -t 194846926016.dkr.ecr.eu-central-1.amazonaws.com/${job}:${DeployTarget}-${build_sha} ."
       }
     }
