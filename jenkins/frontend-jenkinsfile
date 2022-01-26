@@ -69,10 +69,10 @@ pipeline {
     stage('Deploying') {
       steps{
         script {
-          sh "sed -i 's~HASH~${DeployTarget}-${build_sha}~g' dev/frontend-app/deployment.yaml"
+          sh "sed -i 's~HASH~${DeployTarget}-${build_sha}~g' k8s/frontend/deployment.yaml"
           sh 'aws eks --region eu-central-1 update-kubeconfig --name test-app2'
-          sh 'kubectl config set-context --current --namespace=dev-app'
-          sh "pwd && ls && kubectl apply -f dev/frontend-app/deployment.yaml && kubectl apply -f dev/frontend-app/service.yaml"
+          sh 'kubectl config set-context --current --namespace=my-commands'
+          sh "pwd && ls && kubectl apply -f k8s/frontend/deployment.yaml && kubectl apply -f k8s/frontend/service.yaml"
    }} }
   }
 }
