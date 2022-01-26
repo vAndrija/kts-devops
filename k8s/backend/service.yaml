@@ -1,15 +1,13 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: my-commands-backend-service
+  labels:
+    name: kts-backend-service
+  name: kts-backend-service
   namespace: my-commands
 spec:
-  selector:
-    app: my-commands-backend
   ports:
-    - name: http
-      port: 80
-      targetPort: 8000
-  type: LoadBalancer
-
+    - port: 8080
+  selector:
+    app: kts-backend-service
 
