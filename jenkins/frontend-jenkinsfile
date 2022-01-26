@@ -64,7 +64,7 @@ pipeline {
     }
     stage('Pulling Configuration Code') {
       steps{
-        git credentialsId: 'github-andrija', url: 'https://github.com/vAndrija/kts-devops', branch: 'develop', changelog: 'True'}
+        git credentialsId: 'github-andrija', url: 'https://github.com/vAndrija/kts-devops', branch: 'master', changelog: 'True'}
     }
     stage('Deploying') {
       steps{
