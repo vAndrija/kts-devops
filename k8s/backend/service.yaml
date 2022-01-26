@@ -9,5 +9,5 @@ spec:
   ports:
     - port: 8080
   selector:
-    app: kts-backend-service
+    app: kts-backend
 
