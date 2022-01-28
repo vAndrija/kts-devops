@@ -17,7 +17,10 @@ pipeline {
     string(name: 'Branch', defaultValue: 'develop', description: 'Which branch are we building?', trim: true)
     choice(name: 'DeployTarget', choices: ['no_deploy', 'dev', 'prod'], description: 'Which environment are we deploying this to?')
   }
-
+  tools {
+   maven 'maven'
+   jdk 'java'
+  }
   stages {
     stage('parameterizing') {
       when {
@@ -37,6 +40,30 @@ pipeline {
         }
       }
     }
+    stage('SonarQube analysis') {
+    environment {
+      SCANNER_HOME = tool 'Sonar-scanner'
+    }
+    steps {
+    withSonarQubeEnv(credentialsId: 'sonar-credentialsId', installationName: 'Sonar') {
+         sh '''$SCANNER_HOME/bin/sonar-scanner \
+         -Dsonar.projectKey=projectKey \
+         -Dsonar.projectName=projectName \
+         -Dsonar.sources=src/ \
+         -Dsonar.java.binaries=target/classes/ \
+         -Dsonar.exclusions=src/test/java/****/*.java \
+         -Dsonar.java.libraries=/var/lib/jenkins/.m2/**/*.jar \
+         -Dsonar.projectVersion=${BUILD_NUMBER}-${GIT_COMMIT_SHORT}'''
+       }
+     }
+   }
+   stage('SQuality Gate') {
+     steps {
+       timeout(time: 1, unit: 'MINUTES') {
+       waitForQualityGate abortPipeline: true
+       }
+    }
+    
     stage('Assembling App Container') {
       steps {
         script { sh(returnStdout: true, script: "echo \$(git log -n 1 --pretty=format:'%H') > code_revision") }
