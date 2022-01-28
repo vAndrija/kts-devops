@@ -46,6 +46,7 @@ pipeline {
         sh "docker run -d  --name temp 194846926016.dkr.ecr.eu-central-1.amazonaws.com/kts-backend:${DeployTarget}-${build_sha}"
         sh "docker cp \$(docker ps -aqf \"name=temp\"):/app  dockering"
         sh "docker kill \$(docker ps -q)"
+        sh "docker container rm \$(docker container ls -aq)"
       }
     }
     stage('SonarCloud') {
