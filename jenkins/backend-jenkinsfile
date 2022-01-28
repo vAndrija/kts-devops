@@ -43,6 +43,7 @@ pipeline {
     SCANNER_HOME = tool 'SonarQubeScanner'
         }
     steps {
+      sh 'mvn clean install -DskipTests'
     withSonarQubeEnv('Sonar') {
         sh '''$SCANNER_HOME/bin/sonar-scanner \
          -Dsonar.projectKey=projectKey \
