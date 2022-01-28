@@ -41,20 +41,20 @@ pipeline {
       }
     }
     stage('SonarQube analysis') {
-    environment {
-      SCANNER_HOME = tool 'Sonar-scanner'
-    }
+      environment {
+        SCANNER_HOME = tool 'Sonar-scanner'
+      }
     steps {
-    withSonarQubeEnv(credentialsId: 'sonar-credentialsId', installationName: 'Sonar') {
-         sh '''$SCANNER_HOME/bin/sonar-scanner \
-         -Dsonar.projectKey=projectKey \
-         -Dsonar.projectName=projectName \
-         -Dsonar.sources=src/ \
-         -Dsonar.java.binaries=target/classes/ \
-         -Dsonar.exclusions=src/test/java/****/*.java \
-         -Dsonar.java.libraries=/var/lib/jenkins/.m2/**/*.jar \
-         -Dsonar.projectVersion=${BUILD_NUMBER}-${GIT_COMMIT_SHORT}'''
-       }
+      withSonarQubeEnv(credentialsId: 'sonar-credentialsId', installationName: 'Sonar') {
+           sh '''$SCANNER_HOME/bin/sonar-scanner \
+           -Dsonar.projectKey=projectKey \
+           -Dsonar.projectName=projectName \
+           -Dsonar.sources=src/ \
+           -Dsonar.java.binaries=target/classes/ \
+           -Dsonar.exclusions=src/test/java/****/*.java \
+           -Dsonar.java.libraries=/var/lib/jenkins/.m2/**/*.jar \
+           -Dsonar.projectVersion=${BUILD_NUMBER}-${GIT_COMMIT_SHORT}'''
+         }
      }
    }
    stage('SQuality Gate') {
@@ -63,7 +63,7 @@ pipeline {
        waitForQualityGate abortPipeline: true
        }
     }
-    
+   }
     stage('Assembling App Container') {
       steps {
         script { sh(returnStdout: true, script: "echo \$(git log -n 1 --pretty=format:'%H') > code_revision") }
