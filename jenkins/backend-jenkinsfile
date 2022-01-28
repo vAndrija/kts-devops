@@ -17,10 +17,6 @@ pipeline {
     string(name: 'Branch', defaultValue: 'develop', description: 'Which branch are we building?', trim: true)
     choice(name: 'DeployTarget', choices: ['no_deploy', 'dev', 'prod'], description: 'Which environment are we deploying this to?')
   }
-  tools {
-   maven 'maven'
-   jdk 'java'
-  }
   stages {
     stage('parameterizing') {
       when {
