@@ -44,7 +44,9 @@ pipeline {
         }
     steps {
     withSonarQubeEnv('Sonar') {
-        sh 'mvn clean install -DskipTests'
+        withMaven {
+                sh "mvn clean install -DskipTests"
+          } 
         sh '''$SCANNER_HOME/bin/sonar-scanner \
          -Dsonar.projectKey=projectKey \
          -Dsonar.java.binaries=target/classes/ \
