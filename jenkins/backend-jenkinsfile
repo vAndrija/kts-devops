@@ -18,9 +18,6 @@ pipeline {
     choice(name: 'DeployTarget', choices: ['no_deploy', 'dev', 'prod'], description: 'Which environment are we deploying this to?')
   }
   
-  tools {
-   maven 'maven'
-  }
   
   stages {
     stage('parameterizing') {
