@@ -36,24 +36,23 @@ pipeline {
         }
       }
     }
-    stage('SonarQube analysis') {
+    stage('SonarCloud') {
       environment {
-        SCANNER_HOME = tool 'Sonar-scanner'
-      }
+    SCANNER_HOME = tool 'SonarQubeScanner'
+        }
     steps {
-      withSonarQubeEnv(credentialsId: 'sonar-credentialsId', installationName: 'Sonar') {
-           sh 'echo $SCANNER_HOME'
-           sh '''$SCANNER_HOME/bin/sonar-scanner \
-           -Dsonar.projectKey=projectKey \
-           -Dsonar.projectName=projectName \
-           -Dsonar.sources=src/ \
-           -Dsonar.java.binaries=target/classes/ \
-           -Dsonar.exclusions=src/test/java/****/*.java \
-           -Dsonar.java.libraries=/var/lib/jenkins/.m2/**/*.jar \
-           -Dsonar.projectVersion=${BUILD_NUMBER}-${GIT_COMMIT_SHORT}'''
-         }
-     }
-   }
+    withSonarQubeEnv('SonarCloudOne') {
+        sh '''$SCANNER_HOME/bin/sonar-scanner \
+         -Dsonar.projectKey=projectKey \
+         -Dsonar.projectName=projectName \
+         -Dsonar.sources=src/ \
+         -Dsonar.java.binaries=target/classes/ \
+         -Dsonar.exclusions=src/test/java/****/*.java \
+         -Dsonar.java.libraries=/var/lib/jenkins/.m2/**/*.jar \
+         '''
+    }
+  }
+  }
    stage('SQuality Gate') {
      steps {
        timeout(time: 1, unit: 'MINUTES') {
